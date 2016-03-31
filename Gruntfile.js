@@ -3,6 +3,8 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    clean: ['public/build/'],
+
     concat: {
       options: {
         separator: ';',
@@ -40,9 +42,7 @@ module.exports = function(grunt) {
     },
 
     eslint: {
-      target: [
-        // Add list of files to lint here
-      ]
+      target: ['**/*.js']
     },
 
     cssmin: {
@@ -76,6 +76,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push live master'
       }
     },
   });
@@ -84,6 +85,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-shell');
@@ -102,12 +104,12 @@ module.exports = function(grunt) {
     grunt.task.run([ 'watch' ]);
   });
 
-
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
-      // add your production server task here
+      grunt.task.run(['shell'])
+    } else {
+      grunt.task.run([ 'server-dev' ]);
     }
-    grunt.task.run([ 'server-dev' ]);
   });
 
   ////////////////////////////////////////////////////
@@ -120,19 +122,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['build']);
 
-  grunt.registerTask('build', [/*delete build folder,*/ 'concat', 'uglify', 'cssmin']);
+  grunt.registerTask('build', ['eslint', 'test', 'clean', 'concat', 'uglify', 'cssmin']);
 
-  grunt.registerTask('upload', function(n) {
-    if (grunt.option('prod')) {
-      // add your production server task here
-    } else {
-      grunt.task.run([ 'server-dev' ]);
-    }
-  });
-
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-  ]);
+  grunt.registerTask('deploy', ['build', 'upload']);
 
 
 };
