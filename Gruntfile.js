@@ -46,6 +46,15 @@ module.exports = function(grunt) {
     },
 
     cssmin: {
+      target: {
+        files: [{
+          expand: true,
+          cwd: 'public/',
+          src: ['*.css', '!*.min.css'],
+          dest: 'public/build/',
+          ext: '.min.css'
+        }]
+      }
     },
 
     watch: {
@@ -111,7 +120,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['build']);
 
-  grunt.registerTask('build', ['concat', 'uglify']);
+  grunt.registerTask('build', [/*delete build folder,*/ 'concat', 'uglify', 'cssmin']);
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
