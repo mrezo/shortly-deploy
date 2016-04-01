@@ -75,6 +75,9 @@ module.exports = function(grunt) {
     },
 
     shell: {
+      options: {
+        stdout: true
+      },
       prodServer: {
         command: 'git push live master'
       }
@@ -106,7 +109,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
-      grunt.task.run(['shell'])
+      grunt.task.run(['shell:prodServer'])
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
